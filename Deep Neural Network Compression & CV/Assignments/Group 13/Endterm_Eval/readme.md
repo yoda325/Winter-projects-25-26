@@ -12,10 +12,19 @@ This repository implements the full **Deep Compression** pipeline—Pruning, Tra
 
 ## 🛠️ Installation & Setup
 
-### 1. Environment Activation
-Open the project folder in your terminal and activate the virtual environment:
+### 1. Download the Project
+First, clone the repository to your local machine and navigate into the project directory:
 
 ```bash
+git clone [https://github.com/SubZeroNewbie/Winter-projects-25-26.git](https://github.com/SubZeroNewbie/Winter-projects-25-26.git)
+cd Winter-projects-25-26/Project
+```
+### 2. Environment Activation
+
+```bash
+# Create a virtual environment if you haven't already
+python3 -m venv .venv
+
 # Activate the virtual environment
 source .venv/bin/activate 
 
@@ -23,13 +32,18 @@ source .venv/bin/activate
 pip install torch torchvision numpy scikit-learn
 ```
 
-### 2. Execution
+### 3. Execution
 
 To run the full end-to-end pipeline (Training -> Pruning -> Quantization -> Huffman):
 ```bash
 python3 main.py
 ```
+Note: This process includes fine-tuning epochs to recover accuracy loss after pruning and may take several minutes on an M1/M2 Mac.
+If you have already run the pipeline and have a compressed.npz file in the compressed_models/ folder, you can skip retraining and view the final evaluation metrics (Compression Ratio, Accuracy Change, and Latency) instantly:
 
+```bash
+python3 print_results.py
+```
 
 
 ## 📁 Project Structure
