@@ -30,25 +30,60 @@ To run the full end-to-end pipeline (Training -> Pruning -> Quantization -> Huff
 python3 main.py
 ```
 
+
+
 ## 📁 Project Structure
-* compression/: Core optimization logic.
+### compression/: Core optimization logic.
 
-* **prune.py: Magnitude-based global pruning.
+* prune.py: Magnitude-based global pruning.
 
-* **quantization.py: K-Means clustering and weight sharing.
+* quantization.py: K-Means clustering and weight sharing.
 
-* **conv2d.py / linear.py: Custom wrappers handling mask and indices buffers.
+* conv2d.py / linear.py: Custom wrappers handling mask and indices buffers.
 
 * **models/: model_cifar.py defines the VGG-style architecture.
 
-* utils/:
+### utils/:
 
-training.py: Standard loops + Vectorized Centroid Update logic for M1 performance.
+* training.py: Standard loops + Vectorized Centroid Update logic for M1 performance.
 
-huffman.py: Stage 3 entropy encoding and relative stride calculation.
+* huffman.py: Stage 3 entropy encoding and relative stride calculation.
 
-loading.py: Custom .npz serialization to save actual disk space.
+* loading.py: Custom .npz serialization to save actual disk space.
 
-performance.py: Benchmarks for latency (ms) and Peak RAM (MB).
+* performance.py: Benchmarks for latency (ms) and Peak RAM (MB).
 
-config.py: Centralized hyperparameters and device configuration.
+* config.py: Centralized hyperparameters and device configuration.
+
+
+
+## 📥 Loading the Compressed Model
+Since the weights are stored in a custom sparse format, use the provided utility to load them:
+```bash
+Python
+from models.model_cifar import SmallCIFARNet
+from utils.loading import load_model_from_npz
+from config import DEVICE
+
+# Initialize architecture
+model = SmallCIFARNet().to(DEVICE)
+
+# Load weights from the compressed .npz archive
+load_model_from_npz(model, "compressed_models/compressed.npz", DEVICE)
+
+model.eval()
+```
+
+
+
+## 📊 Final Results
+Benchmarks performed on an 8GB M1 MacBook Air:
+
+Metric	Result
+Original Size (Dense)	**~2.54 MB**
+Compressed Size (Huffman)	**0.07 MB**
+Compression Ratio	**38.13x**
+Accuracy Change	**-0.98% (80.19% Final)**
+Avg Bits per Weight	**0.84 bits**
+Inference Latency	**0.47 ms / image**
+Peak RAM Usage	**~1033 MB**
