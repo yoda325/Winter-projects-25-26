@@ -43,10 +43,8 @@ for _ in range(meta_iterations):
         Xq = torch.tensor(train_Xq[i], dtype=torch.float32)
         Yq = torch.tensor(train_Yq[i], dtype=torch.float32)
 
-        # Initialize fast weights
         fast_weights = list(model.parameters())
 
-        # helper forward using fast weights
         def forward_with_weights(x, weights):
             idx = 0
             x = torch.nn.functional.linear(x, weights[idx], weights[idx+1]); idx += 2
@@ -56,18 +54,14 @@ for _ in range(meta_iterations):
             x = torch.nn.functional.linear(x, weights[idx], weights[idx+1])
             return x
 
-        # inner loop (FIXED)
         for j in range(inner_steps):
             preds = forward_with_weights(Xs, fast_weights)
-
             loss = loss_fn(preds, Ys)
             grads = torch.autograd.grad(loss, fast_weights, create_graph=False)
-
             fast_weights = [
                 w - inner_lr * g for w, g in zip(fast_weights, grads)
             ]
 
-        # query evaluation
         preds_q = forward_with_weights(Xq, fast_weights)
         loss_q = loss_fn(preds_q, Yq)
 
@@ -75,7 +69,6 @@ for _ in range(meta_iterations):
 
     meta_loss /= len(train_Xs)
     loss_history.append(meta_loss.item())
-
     optimizer.zero_grad()
     meta_loss.backward()
     optimizer.step()
