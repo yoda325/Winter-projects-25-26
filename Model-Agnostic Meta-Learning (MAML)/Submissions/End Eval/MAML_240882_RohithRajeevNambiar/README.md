@@ -85,7 +85,6 @@ It outputs:
 
 ---
 
-```markdown
 ## 6. Results
 
 The model is evaluated using **NMSE (in dB)** across different adaptation steps for both 5-shot and 20-shot settings.
@@ -110,10 +109,10 @@ The model is evaluated using **NMSE (in dB)** across different adaptation steps 
 
 MAML achieves lower NMSE than the baseline in both 5-shot and 20-shot settings, demonstrating faster adaptation.
 
-
 ---
 
 ## Project Structure
+
 
 ```
 end_term/
